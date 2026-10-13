@@ -11,7 +11,13 @@ let currentFilter = "all";
 let nextId = 1;
 
 function addTask() {
-  const text = input.value;
+  const text = input.value.trim(); // 2 - Пустая строка (в том числе из одних пробелов) не добавляется; показывается сообщение «Введите текст задачи»
+
+  if (text === "") {
+    errorEl.hidden = false; // 2 - Пустая строка (в том числе из одних пробелов) не добавляется; показывается сообщение «Введите текст задачи»
+    return;
+  }
+
   errorEl.hidden = true;
   tasks.push({ id: nextId++, text: text, done: false });
   input.value = "";
@@ -20,36 +26,49 @@ function addTask() {
 
 function toggleTask(id) {
   const task = tasks.find((t) => t.id === id);
-  task.done = true;
+  task.done = !task.done; // 5 - Повторный клик убирает зачёркивание
   render();
 }
 
 function deleteTask(id) {
-  tasks.filter((t) => t.id !== id);
+  tasks = tasks.filter((t) => t.id !== id); // 6 - Клик по кнопке «✕» убирает задачу из списка и из счётчика
   render();
 }
 
 function clearCompleted() {
-  tasks = [];
+  tasks = tasks.filter((t) => !t.done); // 10 - Удаляются только выполненные задачи, активные остаются
   render();
 }
 
 function getVisibleTasks() {
+  // 8 - «Активные» показывают только невыполненные, «Выполненные» — только выполненные, «Все» — все задачи
+  if (currentFilter === "active") {
+    return tasks.filter((t) => !t.done);
+  } else if (currentFilter === "done") {
+    return tasks.filter((t) => t.done);
+  }
+
   return tasks;
 }
 
 function updateCounter() {
-  counter.textContent = "Активных задач: " + tasks.length;
+  // 7 - Счётчик показывает количество невыполненных задач
+  const activeTasks = tasks.filter((t) => !t.done).length;
+  counter.textContent = "Активных задач: " + activeTasks;
 }
 
 function render() {
+  list.innerHTML = ""; // 9 - На странице ровно столько задач, сколько добавлено, без повторов
+
   const visible = getVisibleTasks();
-  for (let i = 1; i <= visible.length; i++) {
+
+  // 3 - Можно добавлять любое количество задач подряд, список продолжает работать
+  for (let i = 0; i < visible.length; i++) {
     const task = visible[i];
     const li = document.createElement("li");
     li.className = "task";
     if (task.done) {
-      li.classList.add("completed");
+      li.classList.add("done"); // 4 - Одиночный клик по тексту задачи зачёркивает её
     }
 
     const span = document.createElement("span");
@@ -69,7 +88,7 @@ function render() {
   updateCounter();
 }
 
-addBtn.addEventListener("dblclick", addTask);
+addBtn.addEventListener("click", addTask); // 1 - По одиночному клику задача добавляется в список
 clearBtn.addEventListener("click", clearCompleted);
 
 filterButtons.forEach((btn) => {
