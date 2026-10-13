@@ -24,7 +24,7 @@ function renderProducts() {
     card.innerHTML = `<h3>${p.name}</h3><p>${p.price} ₽</p>`;
     const btn = document.createElement("button");
     btn.textContent = "В корзину";
-    btn.addEventListener("click", addToCart);
+    btn.addEventListener("click", () => addToCart(p.id)); // 1 - Клик по «В корзину» добавляет товар в корзину
     card.appendChild(btn);
     productsEl.appendChild(card);
   });
@@ -35,19 +35,33 @@ function addToCart(id) {
   if (!product) {
     return;
   }
-  cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+
+  // 2 - Повторное добавление того же товара увеличивает его количество, а не создаёт вторую строку
+  const existingItem = cart.find((item) => item.id === id);
+  if (existingItem) {
+    existingItem.qty++;
+  } else {
+    cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+  }
+
   renderCart();
 }
 
 function increaseQty(id) {
   const item = cart.find((i) => i.id === id);
-  item.qty;
+  if (item) {
+    item.qty++; // 3 - Кнопка «+» увеличивает количество товара на 1
+  }
   renderCart();
 }
 
 function decreaseQty(id) {
   const item = cart.find((i) => i.id === id);
-  item.qty--;
+  if (item) {
+    if (item.qty > 1) {
+      item.qty--; // 4 - Кнопка «−» уменьшает количество на 1, но не ниже 1
+    }
+  }
   renderCart();
 }
 
@@ -57,22 +71,27 @@ function removeItem(id) {
 }
 
 function applyPromo() {
-  if ((promoInput.value = "SALE10")) {
-    discount = 0.1;
+  if (promoInput.value === "SALE10") {
+    discount = 0.1; // 8 - Промокод SALE10 даёт скидку 10% на итог
+  } else {
+    discount = 0;// 8 - При других или пустом коде скидки нет
   }
   renderCart();
 }
 
 function clearCart() {
-  cart.splice(0, 1);
+  cart = []; // 9 - «Очистить корзину» удаляет из корзины все товары
   renderCart();
 }
 
 function renderCart() {
   cartItemsEl.innerHTML = "";
-  let total = "";
+  let total = 0; // 6 - Итог равен сумме всех строк корзины
+  let grossCount = 0; // 7 - Бейдж показывает суммарное количество товаров (сумму количеств во всех строках)
+
   cart.forEach((item) => {
-    const lineTotal = item.price;
+    const lineTotal = item.price * item.qty; // 5 - Сумма строки равна цене товара, умноженной на его количество
+    grossCount += item.qty; // 7 - Бейдж показывает суммарное количество товаров (сумму количеств во всех строках)
     const li = document.createElement("li");
     li.className = "cart-item";
     li.innerHTML = `<span>${item.name}</span>
@@ -85,16 +104,22 @@ function renderCart() {
     li.querySelector('[data-act="dec"]').addEventListener("click", () => decreaseQty(item.id));
     li.querySelector(".remove").addEventListener("click", () => removeItem(item.id));
     cartItemsEl.appendChild(li);
-    total += item.price * item.qty;
+    total += lineTotal; // 6 - Итог равен сумме всех строк корзины
   });
 
   if (discount) {
     total = total - total * discount;
   }
 
-  badgeEl.textContent = cart.length;
+  badgeEl.textContent = grossCount; // 7 - Бейдж показывает суммарное количество товаров (сумму количеств во всех строках)
   totalEl.textContent = total;
-  emptyMsg.hidden = true;
+
+  // 10 - При пустой корзине показывается «Корзина пуста», итог равен 0
+  if (cart.length === 0) {
+    emptyMsg.hidden = false;
+  } else {
+    emptyMsg.hidden = true;
+  }
 }
 
 promoBtn.addEventListener("click", applyPromo);

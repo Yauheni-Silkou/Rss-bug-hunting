@@ -17,29 +17,39 @@ const grid = document.getElementById("grid");
 const countEl = document.getElementById("count");
 
 function getFiltered() {
-  let result = products;
-  const search = searchInput.value;
+  // 1 - По умолчанию, без выбранных фильтров, показаны все товары
+  let result = [...products];
+  const search = searchInput.value.trim();
   const category = categorySelect.value;
-  const sort = sortSelect.value;
+  const sort = sortSelect.value; // 7 - «По умолчанию» показывает товары в исходном порядке, как при загрузке страницы (делаем копию массива)
 
+  // 8 - Поиск, категория и сортировка действуют одновременно (комбинируются)
   if (search) {
-    result = result.filter((p) => p.name === search);
+    // 3 - Поиск не зависит от регистра букв
+    // 4 - Поиск находит товар по части названия
+    result = result.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
   }
 
+  // 8 - Поиск, категория и сортировка действуют одновременно (комбинируются)
   if (category !== "all") {
-    result = products.filter((p) => p.category !== category);
+    // 5 - Фильтр показывает только товары выбранной категории; «Все категории» — все товары
+    result = result.filter((p) => p.category === category);
   }
 
+  // 8 - Поиск, категория и сортировка действуют одновременно (комбинируются)
   if (sort === "asc") {
-    result.sort((a, b) => b.price - a.price);
-  } else if (sort === "desc") {
+    // 6 - «Цена ↑» сортирует по возрастанию цены
     result.sort((a, b) => a.price - b.price);
+  } else if (sort === "desc") {
+    // 6 - «Цена ↓» — по убыванию
+    result.sort((a, b) => b.price - a.price);
   }
 
   return result;
 }
 
 function render() {
+  grid.innerHTML = ""; // 2 - После смены фильтра на странице только подходящие карточки, старые не остаются
   const items = getFiltered();
   items.forEach((p) => {
     const card = document.createElement("div");
@@ -47,13 +57,19 @@ function render() {
     card.innerHTML = `<h3>${p.name}</h3><p class="cat">${p.category}</p><p class="price">$${p.price}</p>`;
     grid.appendChild(card);
   });
-  countEl.textContent = products.length;
+  countEl.textContent = items.length; // 9 - «Найдено: N» показывает количество товаров после фильтрации
 }
 
 searchInput.addEventListener("input", render);
 categorySelect.addEventListener("change", render);
 sortSelect.addEventListener("change", render);
 
+// 10 - «Сбросить фильтры» очищает поиск, сбрасывает категорию и сортировку и показывает все товары
 resetBtn.addEventListener("click", () => {
   searchInput.value = "";
+  categorySelect.value = "all";
+  sortSelect.value = "default";
+  render();
 });
+
+render();

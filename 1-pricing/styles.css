@@ -34,10 +34,10 @@ body {
 
 .plans {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* 1 - Стоят в один ряд по горизонтали */
   justify-content: center;
   align-items: stretch;
-  gap: 0;
+  gap: 24px; /* 8 - Между карточками промежуток 24px */
   max-width: 960px;
   margin: 0 auto;
 }
@@ -45,14 +45,16 @@ body {
 .plan {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 0;
-  padding: 0;
+  border-radius: 12px; /* 8 - Углы скруглены на 12px */
+  padding: 32px 24px; /* 6 - Внутренние отступы карточки: 32px сверху и снизу, 24px слева и справа */
   width: 280px;
   text-align: center;
+  display: flex; /* 7 - Кнопки "Выбрать" расположены на одной высоте у всех карточек */
+  flex-direction: column; /* 7 - Кнопки "Выбрать" расположены на одной высоте у всех карточек */
 }
 
 .plan--featured {
-  border: 2px solid transparent;
+  border: 2px solid #2563eb; /* 2 - Выделен рамкой толщиной 2px цвета #2563eb */
   box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);
 }
 
@@ -64,7 +66,7 @@ body {
 .price {
   font-size: 40px;
   font-weight: 700;
-  color: #f8fafc;
+  color: #0f172a; /* 5 - Цена тёмная и контрастная, цвет #0f172a */
   margin-bottom: 20px;
 }
 
@@ -78,15 +80,15 @@ body {
   list-style: none;
   margin-bottom: 24px;
   text-align: left;
+  flex-grow: 1; /* 7 - Кнопки "Выбрать" расположены на одной высоте у всех карточек */
 }
 
 .features li {
-  padding: 0;
-  margin-bottom: 8px;
+  padding: 6px 0; /* 3 - У каждой фичи вертикальные отступы 6px */
 }
 
 .features li::before {
-  content: "";
+  content: "✓"; /* 3 - Зелёный маркер-галочка ✓ перед текстом */
   color: #22c55e;
   font-weight: 700;
   margin-right: 8px;
@@ -96,7 +98,7 @@ body {
   display: inline-block;
   padding: 12px 28px;
   border-radius: 8px;
-  background: #cbd5e1;
+  background: #2563eb; /* 4 - Кнопки с синим фоном #2563eb */
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;

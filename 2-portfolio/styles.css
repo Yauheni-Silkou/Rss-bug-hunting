@@ -34,10 +34,10 @@ body {
 
 .gallery {
   display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  gap: 0;
+  flex-direction: row; /* 1 - Карточки стоят в ряд, по 3 в строке */
+  flex-wrap: wrap; /* 2 - При нехватке места карточки переносятся на новую строку */
+  justify-content: center; /* 4 - Блок галереи центрирован по горизонтали */
+  gap: 20px; /* 3 - Между карточками промежуток 20px */
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -54,14 +54,14 @@ body {
 }
 
 .card:hover {
-  transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transform: translateY(-8px); /* 6 - При наведении карточка плавно приподнимается на 8px */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.32); /* 6 - Тень усиливается */
 }
 
 .card img {
   width: 100%;
   height: 200px;
-  object-fit: fill;
+  object-fit: cover; /* 5 - Картинки сохраняют пропорции и обрезаются под размер блока, без искажения */
   display: block;
 }
 
@@ -76,7 +76,7 @@ body {
 
 .tags {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* 7 - Теги стоят в один горизонтальный ряд с промежутком 8px */
   gap: 8px;
   margin-bottom: 14px;
 }
